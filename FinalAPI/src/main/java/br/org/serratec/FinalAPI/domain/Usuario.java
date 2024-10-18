@@ -11,11 +11,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.OneToMany;
 
 @Entity
 public class Usuario {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -120,7 +122,4 @@ public class Usuario {
 		Usuario other = (Usuario) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
-	
 }
