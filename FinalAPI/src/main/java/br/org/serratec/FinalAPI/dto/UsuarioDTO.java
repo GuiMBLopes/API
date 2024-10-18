@@ -30,7 +30,7 @@ public class UsuarioDTO {
 		this.nome = usuario.getNome();
 		this.sobrenome = usuario.getSobrenome();
 		this.email = usuario.getEmail();
-		this.dataNascimento = usuario.getDataNascimento();
+		this.dataNascimento = usuario.getDatasNascimento();
 	}
 
 	public Long getId() {
