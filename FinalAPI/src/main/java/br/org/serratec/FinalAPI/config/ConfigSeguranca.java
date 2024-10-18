@@ -33,7 +33,7 @@ public class ConfigSeguranca {
 		http.csrf(csrf -> csrf.disable())
 		.authorizeHttpRequests(authorize -> 
 	        authorize
-	            .requestMatchers(HttpMethod.POST, "/#####").permitAll()//colocar dps do controller pronto
+	            .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()//colocar dps do controller pronto
 	            .anyRequest().authenticated()
 	    )
 	    .httpBasic(Customizer.withDefaults())
