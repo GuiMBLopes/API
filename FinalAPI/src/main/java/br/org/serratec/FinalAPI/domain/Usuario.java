@@ -3,6 +3,7 @@ package br.org.serratec.FinalAPI.domain;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -11,9 +12,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -35,7 +33,7 @@ public class Usuario {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario")
-	private List<Post> posts;
+	private Set<Post> posts;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario")
@@ -81,11 +79,11 @@ public class Usuario {
 		this.datasNascimento = datasNascimento;
 	}
 
-	public List<Post> getPosts() {
+	public Set<Post> getPosts() {
 		return posts;
 	}
 
-	public void setPosts(List<Post> posts) {
+	public void setPosts(Set<Post> posts) {
 		this.posts = posts;
 	}
 	
