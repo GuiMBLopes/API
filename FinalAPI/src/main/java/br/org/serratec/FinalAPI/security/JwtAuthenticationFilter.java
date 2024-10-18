@@ -3,7 +3,6 @@ package br.org.serratec.FinalAPI.security;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.serratec.backend.servicedto.dto.LoginDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.org.serratec.FinalAPI.dto.LoginDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try {
 			LoginDTO login = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
 			UsernamePasswordAuthenticationToken authToken = 
-					new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword(), new ArrayList<>());
+					new UsernamePasswordAuthenticationToken(login.getUsername(), login.getSenha(), new ArrayList<>());
 			Authentication auth = authenticationManager.authenticate(authToken);
 			return auth;
 		} catch (IOException e) {
