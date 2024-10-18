@@ -3,12 +3,11 @@ package br.org.serratec.FinalAPI.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.org.serratec.FinalAPI.repository.UsuarioRepository;
+import br.org.serratec.FinalAPI.repository.ComentarioRepository;
 
 @Service
-public class UsuarioService {
+public class ComentarioService {
 	
 	@Autowired
-	private UsuarioRepository usuarioRepository;
-
+	private ComentarioRepository comentarioRepository;
 }

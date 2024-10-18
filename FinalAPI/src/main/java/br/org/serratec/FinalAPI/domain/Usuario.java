@@ -1,6 +1,10 @@
 package br.org.serratec.FinalAPI.domain;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,80 +14,112 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.OneToMany;
 
 @Entity
-@Table
 public class Usuario {
-    
-    @Id
-    @GeneratedValue (strategy=GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column 
-    @NotBlank(message= "O nome é obrigatorio")
-    private String nome;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	private String nome;
+	
+	private String sobrenome;
+	
+	private String email;
+	
+	private String senha;
+	
+	@Column(name = "data_nascimento")
+	private LocalDate datasNascimento;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "usuario")
+	private List<Post> posts;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "usuario")
+	private List<Comentario> comentarios;
 
-    @Column
-    @NotBlank(message= "O sobrenome é obrigatorio")
-    private String sobrenome;
+	public Long getId() {
+		return id;
+	}
 
-    @Column
-    @NotBlank(message= "O e-mail é obrigatorio")
-    private String email;
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    @Column
-    @NotBlank(message= "A senha é obrigatoria")
-    private String senha;
+	public String getNome() {
+		return nome;
+	}
 
-    @Column (name="data_nascimento")
-    @NotNull(message= "A data de nascimento é obrigaria")
-    private LocalDate dataNascimento;
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public String getNome() {
-        return nome;
-    }
+	public String getSenha() {
+		return senha;
+	}
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
 
-    public String getSobrenome() {
-        return sobrenome;
-    }
+	public LocalDate getDatasNascimento() {
+		return datasNascimento;
+	}
 
-    public void setSobrenome(String sobrenome) {
-        this.sobrenome = sobrenome;
-    }
+	public void setDatasNascimento(LocalDate datasNascimento) {
+		this.datasNascimento = datasNascimento;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public List<Post> getPosts() {
+		return posts;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
+	
+	public String getSobrenome() {
+		return sobrenome;
+	}
 
-    public String getSenha() {
-        return senha;
-    }
+	public void setSobrenome(String sobrenome) {
+		this.sobrenome = sobrenome;
+	}
+	
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
+	public List<Comentario> getComentarios() {
+		return comentarios;
+	}
 
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
+	public void setComentarios(List<Comentario> comentarios) {
+		this.comentarios = comentarios;
+	}
 
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Usuario other = (Usuario) obj;
+		return Objects.equals(id, other.id);
+	}
 }
