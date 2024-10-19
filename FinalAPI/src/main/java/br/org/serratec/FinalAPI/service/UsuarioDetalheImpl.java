@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import br.org.serratec.FinalAPI.domain.Usuario;
 import br.org.serratec.FinalAPI.repository.UsuarioRepository;
 
 @Service
@@ -16,8 +17,11 @@ public class UsuarioDetalheImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		Usuario usuario = usuarioRepository.findByEmail(username);
+		if(usuario == null) {
+			throw new RuntimeException();
+		}
+		return usuario;
 	}
 
 }
