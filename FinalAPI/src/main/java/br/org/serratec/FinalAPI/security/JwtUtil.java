@@ -16,10 +16,10 @@ public class JwtUtil {
 
 	@Value("${auth-jwt-secret}")
 	private String jwtSecret;
-	
+
 	@Value("${auth-jwt-expiration-miliseg}")
 	private Long jwtExpirationMiliseg;
-	
+
 	public String generateToken(String username) {
 		SecretKey secretKeySpec = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 		return Jwts.builder().setSubject(username)
@@ -51,4 +51,4 @@ public class JwtUtil {
 	public Claims getClaims(String token) {
 		return Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody();
 	}
-} 
+}

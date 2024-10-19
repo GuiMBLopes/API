@@ -1,45 +1,66 @@
 package br.org.serratec.FinalAPI.domain;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Usuario {
-	
+public class Usuario implements UserDetails, Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_usuario")
 	private Long id;
-	
+
 	private String nome;
-	
+
 	private String sobrenome;
-	
+
 	private String email;
-	
+
 	private String senha;
-	
+
+	@OneToMany(mappedBy = "id.usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Relationship> relationships = new HashSet<>();
+
 	@Column(name = "data_nascimento")
 	private LocalDate datasNascimento;
-	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario")
 	private Set<Post> posts;
-	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario")
 	private List<Comentario> comentarios;
+
+	public Set<Relationship> getRelationships() {
+		return relationships;
+	}
+
+	public void setRelationships(Set<Relationship> relationships) {
+		this.relationships = relationships;
+	}
 
 	public Long getId() {
 		return id;
@@ -88,7 +109,7 @@ public class Usuario {
 	public void setPosts(Set<Post> posts) {
 		this.posts = posts;
 	}
-	
+
 	public String getSobrenome() {
 		return sobrenome;
 	}
@@ -96,7 +117,6 @@ public class Usuario {
 	public void setSobrenome(String sobrenome) {
 		this.sobrenome = sobrenome;
 	}
-	
 
 	public List<Comentario> getComentarios() {
 		return comentarios;
@@ -122,4 +142,22 @@ public class Usuario {
 		Usuario other = (Usuario) obj;
 		return Objects.equals(id, other.id);
 	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return senha;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return email;
+	}
+
 }

@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import br.org.serratec.FinalAPI.security.JwtAuthenticationFilter;
 import br.org.serratec.FinalAPI.security.JwtAuthorizationFilter;
@@ -33,11 +34,15 @@ public class ConfigSeguranca {
 		http.csrf(csrf -> csrf.disable())
 		.authorizeHttpRequests(authorize -> 
 	        authorize
-	            .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()//colocar dps do controller pronto
-	            .anyRequest().authenticated()
+	            .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
+	            .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+	            .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+
+	            .anyRequest().permitAll()
 	    )
 	    .httpBasic(Customizer.withDefaults())
-	    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+	    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		 .headers((headers) -> headers.disable());
 		
 		JwtAuthenticationFilter jwtAuthenticationFilter = 
 				new JwtAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))
