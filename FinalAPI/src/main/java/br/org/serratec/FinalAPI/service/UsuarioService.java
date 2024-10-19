@@ -34,8 +34,8 @@ public class UsuarioService {
 		return usuarioRepository.findAll().stream().map(UsuarioDTO::new).toList();
 	}
 
-	public UsuarioDTO buscar(Long id) {
-		return new UsuarioDTO(usuarioRepository.findById(id).get());
+	public Optional<Usuario> buscar(Long id) {
+		return usuarioRepository.findById(id);
 	}
 
 	public void deletarPorId(Long id) {
@@ -67,7 +67,7 @@ public class UsuarioService {
 	}
 
 	public UsuarioSeguidoDTO seguir(Long id) {
-		Optional<Usuario> logado = usuarioRepository.findById(idUsuarioLogado());
+		Optional<Usuario> logado = usuarioRepository.findByEmail(idUsuarioLogado());
 
 		if (id.equals(logado.get().getId())) {
 			throw new FollowException("Não pode seguir a si mesmo");
@@ -83,10 +83,10 @@ public class UsuarioService {
 		return new UsuarioSeguidoDTO(usuarioRepository.findById(id).get());
 	}
 
-	public Long idUsuarioLogado() {
+	public String idUsuarioLogado() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()) {
-			return Long.parseLong(authentication.getName());
+			return authentication.getName();
 		}
 		throw new RuntimeException("Usuario não Autenticado");
 	}
