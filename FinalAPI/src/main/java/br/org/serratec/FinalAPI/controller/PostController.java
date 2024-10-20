@@ -1,10 +1,10 @@
 package br.org.serratec.FinalAPI.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.org.serratec.FinalAPI.domain.Post;
-import br.org.serratec.FinalAPI.repository.PostRepository;
+import br.org.serratec.FinalAPI.dto.PostDTO;
+import br.org.serratec.FinalAPI.dto.PostInserirDTO;
+import br.org.serratec.FinalAPI.service.PostService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -25,45 +27,51 @@ import jakarta.validation.Valid;
 public class PostController {
 
 	@Autowired
-	private PostRepository postRepository;
+	private PostService postService;
 	
 	@GetMapping
-	public ResponseEntity<List<Post>> listar() {
-		return ResponseEntity.ok(postRepository.findAll());
+	public ResponseEntity<List<PostDTO>> listar() {
+		return ResponseEntity.ok(postService.listar());
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Post> buscar(@PathVariable Long id) {
-		Optional<Post> postOpt = postRepository.findById(id);
+	public ResponseEntity<PostDTO> buscar(@PathVariable Long id) {
+		Optional<Post> postOpt = postService.buscar(id);
 		if(postOpt.isPresent()) {
-			return ResponseEntity.ok(postOpt.get());
+			return ResponseEntity.ok(new PostDTO(postOpt.get()));
 		}
 		return ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public Post salvar(@Valid @RequestBody Post post) {
-		post = postRepository.save(post);
-		return post;
+	public ResponseEntity<PostDTO> salvar(@Valid @RequestBody PostInserirDTO postInserirDTO) {
+		PostDTO postDTO = postService.inserirPost(postInserirDTO);
+		URI uri = ServletUriComponentsBuilder
+				.fromCurrentRequest()
+				.path("/{id}")
+				.buildAndExpand(postDTO.getId())
+				.toUri();
+		return ResponseEntity.created(uri).body(postDTO);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Post> atualizar(@PathVariable Long id, @Valid @RequestBody Post post) {
-		if(!postRepository.existsById(id)) {
+	public ResponseEntity<PostDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PostInserirDTO postInserirDTO) {
+		Optional<Post> postOpt = postService.buscar(id);
+		if (postOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		post.setId(id);
-		post = postRepository.save(post);
-		return ResponseEntity.ok(post);
+		PostDTO postDTO = postService.inserirPost(postInserirDTO);
+		postDTO.setId(id);
+		return ResponseEntity.ok(postDTO);
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> apagar(@PathVariable Long id) {
-		if (!postRepository.existsById(id)) {
+		Optional<Post> postOpt = postService.buscar(id);
+		if (postOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		postRepository.deleteById(id);
+		postService.deletarPorId(id);
 		return ResponseEntity.noContent().build();
 	}
 	

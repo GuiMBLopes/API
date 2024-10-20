@@ -2,6 +2,7 @@ package br.org.serratec.FinalAPI.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import br.org.serratec.FinalAPI.domain.Post;
 import br.org.serratec.FinalAPI.dto.PostDTO;
 import br.org.serratec.FinalAPI.dto.PostInserirDTO;
 import br.org.serratec.FinalAPI.repository.PostRepository;
-import br.org.serratec.FinalAPI.repository.UsuarioRepository;
 
 @Service
 public class PostService {
@@ -19,14 +19,14 @@ public class PostService {
 	private PostRepository postRepository;
 	
 	@Autowired
-	UsuarioRepository usuarioRepository;
+	private UsuarioService usuarioService;
 	
 	public List<PostDTO> listar() {
 		return postRepository.findAll().stream().map(PostDTO::new).toList();
 	}
 
-	public PostDTO buscar(Long id) {
-		return new PostDTO(postRepository.findById(id).get());
+	public Optional<Post> buscar(Long id) {
+		return postRepository.findById(id);
 	}
 
 	public void deletarPorId(Long id) {
@@ -35,7 +35,7 @@ public class PostService {
 	
 	public List<PostDTO> postPorUsuario(Long id){
 		List<PostDTO> postDTO = new ArrayList<>();
-		for (Post post : usuarioRepository.findById(id).get().getPosts()) {
+		for (Post post : usuarioService.buscar(id).get().getPosts()) {
 			postDTO.add(new PostDTO(post));
 		}
 		return postDTO;
@@ -45,6 +45,7 @@ public class PostService {
 		Post post = new Post();
 		post.setConteudo(postInserirDTO.getConteudo());
 		post.setDataCriacao(postInserirDTO.getDataCriacao());
+		//post.setUsuario(usuarioService.buscar(usuarioService.idUsuarioLogado()).get());
 		
 		return new PostDTO(postRepository.save(post));
 	}

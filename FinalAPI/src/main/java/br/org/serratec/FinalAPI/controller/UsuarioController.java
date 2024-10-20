@@ -1,10 +1,10 @@
 package br.org.serratec.FinalAPI.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.org.serratec.FinalAPI.domain.Usuario;
-import br.org.serratec.FinalAPI.repository.UsuarioRepository;
+import br.org.serratec.FinalAPI.dto.UsuarioDTO;
+import br.org.serratec.FinalAPI.dto.UsuarioInserirDTO;
+import br.org.serratec.FinalAPI.service.UsuarioService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -25,45 +27,51 @@ import jakarta.validation.Valid;
 public class UsuarioController {
 
 	@Autowired
-	private UsuarioRepository usuarioRepository;
+	private UsuarioService usuarioService;
 	
 	@GetMapping
-	public ResponseEntity<List<Usuario>> listar() {
-		return ResponseEntity.ok(usuarioRepository.findAll());
+	public ResponseEntity<List<UsuarioDTO>> listar() {
+		return ResponseEntity.ok(usuarioService.listar());
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Usuario> buscar(@PathVariable Long id) {
-		Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+	public ResponseEntity<UsuarioDTO> buscar(@PathVariable Long id) {
+		Optional<Usuario> usuarioOpt = usuarioService.buscar(id);
 		if(usuarioOpt.isPresent()) {
-			return ResponseEntity.ok(usuarioOpt.get());
+			return ResponseEntity.ok(new UsuarioDTO(usuarioOpt.get()));
 		}
 		return ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public Usuario salvar(@Valid @RequestBody Usuario usuario) {
-		usuario = usuarioRepository.save(usuario);
-		return usuario;
+	public ResponseEntity<UsuarioDTO> salvar(@Valid @RequestBody UsuarioInserirDTO usuarioInserirDTO) {
+		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO);
+		URI uri = ServletUriComponentsBuilder
+				.fromCurrentRequest()
+				.path("/{id}")
+				.buildAndExpand(usuarioDTO.getId())
+				.toUri();
+		return ResponseEntity.created(uri).body(usuarioDTO);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @Valid @RequestBody Usuario usuario) {
-		if(!usuarioRepository.existsById(id)) {
+	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioInserirDTO usuarioInserirDTO) {
+		Optional<Usuario> usuarioOpt = usuarioService.buscar(id);
+		if (usuarioOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		usuario.setId(id);
-		usuario = usuarioRepository.save(usuario);
-		return ResponseEntity.ok(usuario);
+		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO);
+		usuarioDTO.setId(id);
+		return ResponseEntity.ok(usuarioDTO);
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> apagar(@PathVariable Long id) {
-		if (!usuarioRepository.existsById(id)) {
+		Optional<Usuario> usuarioOpt = usuarioService.buscar(id);
+		if (usuarioOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		usuarioRepository.deleteById(id);
+		usuarioService.deletarPorId(id);
 		return ResponseEntity.noContent().build();
 	}
 	

@@ -3,12 +3,14 @@ package br.org.serratec.FinalAPI.dto;
 import java.time.LocalDate;
 
 import br.org.serratec.FinalAPI.domain.Post;
+import br.org.serratec.FinalAPI.domain.Usuario;
 
 public class PostDTO {
 
 	private Long id;
 	private String conteudo;
 	private LocalDate dataCriacao;
+	private Usuario usuario;
 
 	public PostDTO() {
 
@@ -25,6 +27,7 @@ public class PostDTO {
 		this.id = post.getId();
 		this.conteudo = post.getConteudo();
 		this.dataCriacao = post.getDataCriacao();
+		this.usuario = post.getUsuario();
 	}
 
 	public Long getId() {
@@ -49,6 +52,14 @@ public class PostDTO {
 
 	public void setDataCriacao(LocalDate dataCriacao) {
 		this.dataCriacao = dataCriacao;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }
