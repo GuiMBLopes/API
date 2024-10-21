@@ -62,14 +62,6 @@ public class Comentario {
         this.dataCriacao = dataCriacao;
     }
 
-	public Post getPost() {
-		return post;
-	}
-
-	public void setPost(Post post) {
-		this.post = post;
-	}
-
 	public Usuario getUsuario() {
 		return usuario;
 	}
@@ -77,8 +69,12 @@ public class Comentario {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-	
-	
-    
-    
+
+	public Post getPost() {
+		return post;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
 }

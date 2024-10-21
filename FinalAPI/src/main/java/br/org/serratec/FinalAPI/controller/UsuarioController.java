@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.org.serratec.FinalAPI.domain.Usuario;
+import br.org.serratec.FinalAPI.dto.NomeUsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioInserirDTO;
 import br.org.serratec.FinalAPI.service.UsuarioService;
@@ -75,4 +76,8 @@ public class UsuarioController {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@GetMapping("/seguir/{id}")
+	public ResponseEntity<NomeUsuarioDTO> seguir(@PathVariable Long id) {
+		return ResponseEntity.ok(usuarioService.seguir(id));
+	}
 }

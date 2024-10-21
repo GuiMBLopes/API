@@ -1,10 +1,11 @@
 package br.org.serratec.FinalAPI.dto;
 
-import java.time.LocalDate;
+import br.org.serratec.FinalAPI.domain.Post;
 
 public class ComentarioInserirDTO {
+	
 	private String texto;
-	private LocalDate dataCricao;
+	private Post post;
 
 	public String getTexto() {
 		return texto;
@@ -14,12 +15,12 @@ public class ComentarioInserirDTO {
 		this.texto = texto;
 	}
 
-	public LocalDate getDataCricao() {
-		return dataCricao;
+	public Post getPost() {
+		return post;
 	}
 
-	public void setDataCricao(LocalDate dataCricao) {
-		this.dataCricao = dataCricao;
+	public void setPost(Post post) {
+		this.post = post;
 	}
 
 }

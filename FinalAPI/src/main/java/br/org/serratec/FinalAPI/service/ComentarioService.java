@@ -1,7 +1,9 @@
 package br.org.serratec.FinalAPI.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import br.org.serratec.FinalAPI.domain.Comentario;
 import br.org.serratec.FinalAPI.dto.ComentarioDTO;
 import br.org.serratec.FinalAPI.dto.ComentarioInserirDTO;
+import br.org.serratec.FinalAPI.dto.PostDTO;
 import br.org.serratec.FinalAPI.repository.ComentarioRepository;
 import br.org.serratec.FinalAPI.repository.UsuarioRepository;
 
@@ -19,14 +22,24 @@ public class ComentarioService {
 	private ComentarioRepository comentarioRepository;
 	
 	@Autowired
-	UsuarioRepository usuarioRepository;
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
 	public List<ComentarioDTO> listar() {
-		return comentarioRepository.findAll().stream().map(ComentarioDTO::new).toList();
+		List<Comentario> comentarios = comentarioRepository.findAll();
+		List<ComentarioDTO> comentariosDTO = new ArrayList<>();
+		for (Comentario comentario : comentarios) {
+			ComentarioDTO comentarioDTO = new ComentarioDTO(comentario);
+			comentarioDTO.setPostDTO(new PostDTO(comentario.getPost()));
+			comentariosDTO.add(comentarioDTO);
+		}
+		return comentariosDTO;
 	}
 
-	public ComentarioDTO buscar(Long id) {
-		return new ComentarioDTO(comentarioRepository.findById(id).get());
+	public Optional<Comentario> buscar(Long id) {
+		return comentarioRepository.findById(id);
 	}
 
 	public void deletarPorId(Long id) {
@@ -43,8 +56,10 @@ public class ComentarioService {
 	
 	public ComentarioDTO inserirComentario (ComentarioInserirDTO comentarioInserirDTO) {
 		Comentario comentario = new Comentario();
+		comentario.setUsuario(usuarioService.buscar(usuarioRepository.findByEmail(usuarioService.idUsuarioLogado()).get().getId()).get());
 		comentario.setTexto(comentarioInserirDTO.getTexto());
-		comentario.setDataCriacao(comentarioInserirDTO.getDataCricao());
+		comentario.setPost(comentarioInserirDTO.getPost());
+		comentario.setDataCriacao(LocalDate.now());
 		
 		return new ComentarioDTO(comentarioRepository.save(comentario));
 	}
