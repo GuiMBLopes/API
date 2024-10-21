@@ -1,5 +1,6 @@
 package br.org.serratec.FinalAPI.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import br.org.serratec.FinalAPI.domain.Post;
 import br.org.serratec.FinalAPI.dto.PostDTO;
 import br.org.serratec.FinalAPI.dto.PostInserirDTO;
 import br.org.serratec.FinalAPI.repository.PostRepository;
+import br.org.serratec.FinalAPI.repository.UsuarioRepository;
 
 @Service
 public class PostService {
@@ -20,6 +22,9 @@ public class PostService {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	public List<PostDTO> listar() {
 		return postRepository.findAll().stream().map(PostDTO::new).toList();
@@ -43,9 +48,9 @@ public class PostService {
 	
 	public PostDTO inserirPost (PostInserirDTO postInserirDTO) {
 		Post post = new Post();
+		post.setDataCriacao(LocalDate.now());
 		post.setConteudo(postInserirDTO.getConteudo());
-		post.setDataCriacao(postInserirDTO.getDataCriacao());
-		//post.setUsuario(usuarioService.buscar(usuarioService.idUsuarioLogado()).get());
+		post.setUsuario(usuarioService.buscar(usuarioRepository.findByEmail(usuarioService.idUsuarioLogado()).get().getId()).get());
 		
 		return new PostDTO(postRepository.save(post));
 	}

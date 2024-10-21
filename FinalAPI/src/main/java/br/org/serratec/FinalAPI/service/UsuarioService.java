@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.org.serratec.FinalAPI.domain.Relationship;
 import br.org.serratec.FinalAPI.domain.Usuario;
+import br.org.serratec.FinalAPI.dto.NomeUsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioInserirDTO;
-import br.org.serratec.FinalAPI.dto.UsuarioSeguidoDTO;
 import br.org.serratec.FinalAPI.exception.CadastroException;
 import br.org.serratec.FinalAPI.exception.FollowException;
 import br.org.serratec.FinalAPI.repository.UsuarioRepository;
@@ -66,7 +66,7 @@ public class UsuarioService {
 
 	}
 
-	public UsuarioSeguidoDTO seguir(Long id) {
+	public NomeUsuarioDTO seguir(Long id) {
 		Optional<Usuario> logado = usuarioRepository.findByEmail(idUsuarioLogado());
 
 		if (id.equals(logado.get().getId())) {
@@ -80,7 +80,7 @@ public class UsuarioService {
 				throw new FollowException("Você já segue esse usuario");
 			}
 		}
-		return new UsuarioSeguidoDTO(usuarioRepository.findById(id).get());
+		return new NomeUsuarioDTO(usuarioRepository.findById(id).get());
 	}
 
 	public String idUsuarioLogado() {

@@ -9,6 +9,8 @@ public class ComentarioDTO {
 	private Long id;
 	private String texto;
 	private LocalDate dataCriacao;
+	private NomeUsuarioDTO nomeUsuarioDTO;
+	private PostDTO postDTO;
 	
 	public ComentarioDTO() {
 		
@@ -25,6 +27,7 @@ public class ComentarioDTO {
 		this.id = comentario.getId();
 		this.texto = comentario.getTexto();
 		this.dataCriacao = comentario.getDataCriacao();
+		this.nomeUsuarioDTO = new NomeUsuarioDTO(comentario.getUsuario());
 	}
 
 	public Long getId() {
@@ -50,6 +53,21 @@ public class ComentarioDTO {
 	public void setDataCriacao(LocalDate dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
-	
-	
+
+	public NomeUsuarioDTO getNomeUsuarioDTO() {
+		return nomeUsuarioDTO;
+	}
+
+	public void setNomeUsuarioDTO(NomeUsuarioDTO nomeUsuarioDTO) {
+		this.nomeUsuarioDTO = nomeUsuarioDTO;
+	}
+
+	public PostDTO getPostDTO() {
+		return postDTO;
+	}
+
+	public void setPostDTO(PostDTO postDTO) {
+		this.postDTO = postDTO;
+	}
+
 }
