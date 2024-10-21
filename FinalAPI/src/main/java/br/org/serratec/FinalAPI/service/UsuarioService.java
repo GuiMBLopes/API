@@ -47,7 +47,7 @@ public class UsuarioService {
 		if (!usuarioInserirDTO.getSenha().equals(usuarioInserirDTO.getConfirmaSenha())) {
 			throw new CadastroException("As Senhas não iguais");
 		}
-		if (usuarioRepository.findByEmail(usuarioInserirDTO.getEmail()) != null) {
+		if (usuarioRepository.findByEmail(usuarioInserirDTO.getEmail()).isPresent()) {
 			throw new CadastroException("O email já existente");
 		}
 		Period periodo = Period.between(usuarioInserirDTO.getDataNascimento(), LocalDate.now());
