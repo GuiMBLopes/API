@@ -1,5 +1,6 @@
 package br.org.serratec.FinalAPI.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import br.org.serratec.FinalAPI.domain.Usuario;
+import br.org.serratec.FinalAPI.dto.UsuarioIdadeDTO;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
@@ -22,11 +24,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	
 	@Query(value = """
 			SELECT
-				data_part('year', now(), data_nascimento) as idade
+				timestampdiff(YEAR, data_nascimento, current_date) as idade,
+				nome,
+				sobrenome
 			FROM usuario
-			GROUP BY idade
+			GROUP BY idade, nome, sobrenome
 			ORDER BY idade DESC
 			""", nativeQuery = true)
-	Page<Usuario> ListarPorIdade(Pageable pageable);
+	List<UsuarioIdadeDTO> ListarPorIdade();
 
 }

@@ -1,6 +1,7 @@
 package br.org.serratec.FinalAPI.service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -14,11 +15,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.org.serratec.FinalAPI.domain.Relationship;
 import br.org.serratec.FinalAPI.domain.Usuario;
 import br.org.serratec.FinalAPI.dto.NomeUsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioDTO;
+import br.org.serratec.FinalAPI.dto.UsuarioIdadeDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioInserirDTO;
 import br.org.serratec.FinalAPI.exception.CadastroException;
 import br.org.serratec.FinalAPI.exception.FollowException;
@@ -54,7 +58,7 @@ public class UsuarioService {
 	}
 
 	@Transactional
-	public UsuarioDTO inserir(UsuarioInserirDTO usuarioInserirDTO/*, MultipartFile file*/) throws CadastroException, IOException {
+	public UsuarioDTO inserir(UsuarioInserirDTO usuarioInserirDTO, MultipartFile file) throws CadastroException, IOException {
 		if (!usuarioInserirDTO.getSenha().equals(usuarioInserirDTO.getConfirmaSenha())) {
 			throw new CadastroException("As Senhas não iguais");
 		}
@@ -75,28 +79,27 @@ public class UsuarioService {
 
 		usuarioRepository.save(usuario);
 		
-		//fotoService.inserir(usuario, file);
+		fotoService.inserir(usuario, file);
 		
-		//return adicionarImagemUri(usuario);
+		return adicionarImagemUri(usuario);
 		
-		return new UsuarioDTO(usuario);
 	}
 	
-//	public UsuarioDTO adicionarImagemUri(Usuario usuario) {
-//		URI uri = ServletUriComponentsBuilder
-//				.fromCurrentContextPath()
-//				.path("/usuario/{id}/foto")
-//				.buildAndExpand(usuario.getId())
-//				.toUri();
-//		UsuarioDTO dto = new UsuarioDTO();
-//		dto.setId(usuario.getId());
-//		dto.setNome(usuario.getNome());
-//		dto.setSobrenome(usuario.getSobrenome());
-//		dto.setEmail(usuario.getEmail());
-//		dto.setDataNascimento(usuario.getDatasNascimento());
-//		dto.setUrl(uri.toString());
-//		return dto;
-//	}
+	public UsuarioDTO adicionarImagemUri(Usuario usuario) {
+		URI uri = ServletUriComponentsBuilder
+				.fromCurrentContextPath()
+				.path("/usuario/{id}/foto")
+				.buildAndExpand(usuario.getId())
+				.toUri();
+		UsuarioDTO dto = new UsuarioDTO();
+		dto.setId(usuario.getId());
+		dto.setNome(usuario.getNome());
+		dto.setSobrenome(usuario.getSobrenome());
+		dto.setEmail(usuario.getEmail());
+		dto.setDataNascimento(usuario.getDatasNascimento());
+		dto.setUrl(uri.toString());
+		return dto;
+	}
 
 	public NomeUsuarioDTO seguir(Long id) {
 		Optional<Usuario> logado = usuarioRepository.findByEmail(idUsuarioLogado());
@@ -127,10 +130,8 @@ public class UsuarioService {
 		throw new RuntimeException("Usuario não Autenticado");
 	}
 	
-	public Page<UsuarioDTO> listarPorIdade(Pageable pageable){
-		Page<Usuario> pagUsuarios = usuarioRepository.ListarPorIdade(pageable);
-		Page<UsuarioDTO> pagUsuariosDTO = pagUsuarios.map(u -> new UsuarioDTO(u));
-		return pagUsuariosDTO;
+	public List<UsuarioIdadeDTO> listarPorIdade(){
+		return usuarioRepository.ListarPorIdade();
 	}
 	
 	public Page<UsuarioDTO> buscarPorNome(String nome, Pageable pageable){

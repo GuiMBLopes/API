@@ -43,7 +43,9 @@ public class ComentarioController {
 	public ResponseEntity<ComentarioDTO> buscar(@PathVariable Long id) {
 		Optional<Comentario> comentarioOpt = comentarioService.buscar(id);
 		if(comentarioOpt.isPresent()) {
-			return ResponseEntity.ok(new ComentarioDTO(comentarioOpt.get()));
+			ComentarioDTO comentario = new ComentarioDTO(comentarioOpt.get());
+			comentario.setPostDTO(new PostDTO(comentarioOpt.get().getPost()));
+			return ResponseEntity.ok(comentario);
 		}
 		return ResponseEntity.notFound().build();
 	}

@@ -1,9 +1,5 @@
 package br.org.serratec.FinalAPI.domain;
 
-import java.sql.Types;
-
-import org.hibernate.annotations.JdbcTypeCode;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,11 +18,10 @@ public class Foto {
 	private Long id;
 
 	@Lob
-	@JdbcTypeCode(Types.BINARY)
 	private byte[] dados;
 
 	@OneToOne
-	@JoinColumn(name = "id_funcionario")
+	@JoinColumn(name = "id_usuario")
 	private Usuario usuario;
 
 	private String tipo;
