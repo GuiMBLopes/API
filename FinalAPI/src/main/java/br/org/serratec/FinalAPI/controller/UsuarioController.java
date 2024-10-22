@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.org.serratec.FinalAPI.domain.Usuario;
 import br.org.serratec.FinalAPI.dto.NomeUsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioDTO;
+import br.org.serratec.FinalAPI.dto.UsuarioIdadeDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioInserirDTO;
 import br.org.serratec.FinalAPI.exception.CadastroException;
 import br.org.serratec.FinalAPI.service.UsuarioService;
@@ -52,9 +55,9 @@ public class UsuarioController {
 		return ResponseEntity.notFound().build();
 	}
 	
-	@PostMapping/*(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})*/
-	public ResponseEntity<UsuarioDTO> salvar(@Valid /*@RequestPart*/ @RequestBody UsuarioInserirDTO usuarioInserirDTO/*, @RequestPart MultipartFile file*/) throws CadastroException, IOException {
-		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO /*,file*/);
+	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<UsuarioDTO> salvar(@Valid @RequestPart  UsuarioInserirDTO usuarioInserirDTO, @RequestPart MultipartFile file) throws CadastroException, IOException {
+		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO ,file);
 		URI uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
 				.path("/{id}")
@@ -69,7 +72,7 @@ public class UsuarioController {
 		if (usuarioOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO/*, null*/);
+		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO, null);
 		usuarioDTO.setId(id);
 		return ResponseEntity.ok(usuarioDTO);
 	}
@@ -90,8 +93,8 @@ public class UsuarioController {
 	}
 	
 	@GetMapping("/pagina-por-idade")
-	public ResponseEntity<Page<UsuarioDTO>> listarPorIdade(@PageableDefault(page = 0, size = 10) Pageable pageable){
-		return ResponseEntity.ok(usuarioService.listarPorIdade(pageable)); 
+	public ResponseEntity<List<UsuarioIdadeDTO>> listarPorIdade (@PageableDefault(page = 0, size = 10, direction = Sort.Direction.ASC) Pageable pageable){
+		return ResponseEntity.ok(usuarioService.listarPorIdade()); 
 	}
 	
 	@GetMapping("/pagina-nomes")
