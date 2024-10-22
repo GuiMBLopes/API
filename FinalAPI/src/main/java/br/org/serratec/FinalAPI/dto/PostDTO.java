@@ -2,13 +2,18 @@ package br.org.serratec.FinalAPI.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.org.serratec.FinalAPI.domain.Post;
 
 public class PostDTO {
 
 	private Long id;
 	private String conteudo;
+	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCriacao;
+	
 	private NomeUsuarioDTO nomeUsuarioDTO;
 
 	public PostDTO() {
