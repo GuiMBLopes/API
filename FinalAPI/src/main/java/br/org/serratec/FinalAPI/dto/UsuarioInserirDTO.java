@@ -2,12 +2,16 @@ package br.org.serratec.FinalAPI.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class UsuarioInserirDTO {
 	private String nome;
 	private String sobrenome;
 	private String email;
 	private String senha;
 	private String confirmaSenha;
+	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataNascimento;
 
 	public String getNome() {

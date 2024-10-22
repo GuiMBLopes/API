@@ -2,6 +2,8 @@ package br.org.serratec.FinalAPI.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.org.serratec.FinalAPI.domain.Usuario;
 
 public class UsuarioDTO {
@@ -10,7 +12,11 @@ public class UsuarioDTO {
 	private String nome;
 	private String sobrenome;
 	private String email;
+	
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataNascimento;
+	
+	private String url;
 
 	public UsuarioDTO() {
 
@@ -72,5 +78,15 @@ public class UsuarioDTO {
 	public void setDataNascimento(LocalDate dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	
 
 }

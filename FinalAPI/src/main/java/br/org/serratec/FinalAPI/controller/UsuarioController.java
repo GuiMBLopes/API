@@ -1,10 +1,12 @@
 package br.org.serratec.FinalAPI.controller;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,13 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.org.serratec.FinalAPI.domain.Usuario;
 import br.org.serratec.FinalAPI.dto.NomeUsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioDTO;
 import br.org.serratec.FinalAPI.dto.UsuarioInserirDTO;
+import br.org.serratec.FinalAPI.exception.CadastroException;
 import br.org.serratec.FinalAPI.service.UsuarioService;
 import jakarta.validation.Valid;
 
@@ -44,9 +49,9 @@ public class UsuarioController {
 		return ResponseEntity.notFound().build();
 	}
 	
-	@PostMapping
-	public ResponseEntity<UsuarioDTO> salvar(@Valid @RequestBody UsuarioInserirDTO usuarioInserirDTO) {
-		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO);
+	@PostMapping/*(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})*/
+	public ResponseEntity<UsuarioDTO> salvar(@Valid /*@RequestPart*/ @RequestBody UsuarioInserirDTO usuarioInserirDTO/*, @RequestPart MultipartFile file*/) throws CadastroException, IOException {
+		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO /*,file*/);
 		URI uri = ServletUriComponentsBuilder
 				.fromCurrentRequest()
 				.path("/{id}")
@@ -56,12 +61,12 @@ public class UsuarioController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioInserirDTO usuarioInserirDTO) {
+	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioInserirDTO usuarioInserirDTO) throws CadastroException, IOException {
 		Optional<Usuario> usuarioOpt = usuarioService.buscar(id);
 		if (usuarioOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO);
+		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO/*, null*/);
 		usuarioDTO.setId(id);
 		return ResponseEntity.ok(usuarioDTO);
 	}
