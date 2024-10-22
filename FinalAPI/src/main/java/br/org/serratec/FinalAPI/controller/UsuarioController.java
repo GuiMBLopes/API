@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -84,5 +87,15 @@ public class UsuarioController {
 	@GetMapping("/seguir/{id}")
 	public ResponseEntity<NomeUsuarioDTO> seguir(@PathVariable Long id) {
 		return ResponseEntity.ok(usuarioService.seguir(id));
+	}
+	
+	@GetMapping("/pagina-por-idade")
+	public ResponseEntity<Page<UsuarioDTO>> listarPorIdade(@PageableDefault(page = 0, size = 10) Pageable pageable){
+		return ResponseEntity.ok(usuarioService.listarPorIdade(pageable)); 
+	}
+	
+	@GetMapping("/pagina-nomes")
+	public ResponseEntity<Page<UsuarioDTO>> buscarPorNome(String nome, @PageableDefault(page = 0, size = 10) Pageable pageable){
+		return ResponseEntity.ok(usuarioService.buscarPorNome(nome, pageable));
 	}
 }
