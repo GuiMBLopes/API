@@ -9,10 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.org.serratec.FinalAPI.domain.Comentario;
+import br.org.serratec.FinalAPI.domain.Post;
+import br.org.serratec.FinalAPI.domain.Relationship;
+import br.org.serratec.FinalAPI.domain.RelationshipPK;
 import br.org.serratec.FinalAPI.dto.ComentarioDTO;
 import br.org.serratec.FinalAPI.dto.ComentarioInserirDTO;
 import br.org.serratec.FinalAPI.dto.PostDTO;
+import br.org.serratec.FinalAPI.exception.FollowException;
 import br.org.serratec.FinalAPI.repository.ComentarioRepository;
+import br.org.serratec.FinalAPI.repository.RelationshipRepository;
 import br.org.serratec.FinalAPI.repository.UsuarioRepository;
 
 @Service
@@ -26,6 +31,12 @@ public class ComentarioService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private RelationshipRepository relationshipRepository;
+	
+	@Autowired
+	private PostService postService;
 
 	public List<ComentarioDTO> listar() {
 		List<Comentario> comentarios = comentarioRepository.findAll();
@@ -58,10 +69,21 @@ public class ComentarioService {
 		Comentario comentario = new Comentario();
 		comentario.setUsuario(usuarioService.buscar(usuarioRepository.findByEmail(usuarioService.idUsuarioLogado()).get().getId()).get());
 		comentario.setTexto(comentarioInserirDTO.getTexto());
-		comentario.setPost(comentarioInserirDTO.getPost());
-		comentario.setDataCriacao(LocalDate.now());
+		comentario.setDataCriacao(LocalDate.now());		
+		comentario.setPost(postService.buscar(comentarioInserirDTO.getPost().getId()).get());
 		
-		return new ComentarioDTO(comentarioRepository.save(comentario));
+		if(usuarioRepository.findByEmail(usuarioService.idUsuarioLogado()).get().getId().equals(comentario.getPost().getUsuario().getId())) {
+			return new ComentarioDTO(comentarioRepository.save(comentario)); 
+		}
+		
+		for (Relationship relationship: comentario.getPost().getUsuario().getRelationships()) {
+			if(usuarioRepository.findByEmail(usuarioService.idUsuarioLogado()).get().getId().equals(relationship.getId().getSeguidor().getId())) {
+				return new ComentarioDTO(comentarioRepository.save(comentario));
+			}
+		}	
+		throw new FollowException("Você não segue esse usuario");
+		
+		
 	}
 	
 }
