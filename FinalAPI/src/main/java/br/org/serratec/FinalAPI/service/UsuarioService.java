@@ -1,20 +1,19 @@
 package br.org.serratec.FinalAPI.service;
 
 import java.io.IOException;
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.org.serratec.FinalAPI.domain.Relationship;
 import br.org.serratec.FinalAPI.domain.Usuario;
@@ -126,6 +125,19 @@ public class UsuarioService {
 			return authentication.getName();
 		}
 		throw new RuntimeException("Usuario não Autenticado");
+	}
+	
+	public Page<UsuarioDTO> listarPorIdade(Pageable pageable){
+		Page<Usuario> pagUsuarios = usuarioRepository.ListarPorIdade(pageable);
+		Page<UsuarioDTO> pagUsuariosDTO = pagUsuarios.map(u -> new UsuarioDTO(u));
+		return pagUsuariosDTO;
+	}
+	
+	public Page<UsuarioDTO> buscarPorNome(String nome, Pageable pageable){
+		Page<Usuario> pagUsuarios = usuarioRepository.buscarPorNome(nome, pageable);
+		Page<UsuarioDTO> pagUsuariosDTO = pagUsuarios.map(u -> new UsuarioDTO(u));
+		
+		return pagUsuariosDTO;
 	}
 
 }
