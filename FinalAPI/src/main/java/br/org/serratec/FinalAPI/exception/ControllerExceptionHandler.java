@@ -39,4 +39,9 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler{
 	private ResponseEntity<Object> handleFollowException(FollowException ex){
 		return ResponseEntity.unprocessableEntity().body(ex.getMessage());
 	}
+	
+	@ExceptionHandler(TokenException.class)
+	private ResponseEntity<Object> handleTokenException(TokenException ex){
+		return ResponseEntity.unprocessableEntity().body(ex.getMessage());
+	}
 }

@@ -109,12 +109,12 @@ public class UsuarioController {
 			@ApiResponse(responseCode = "505", description = "Exceção interna da aplicação", content = @Content(mediaType = "application/json", schema = @Schema(type = "object", example = "{\"error\": \"Internal Server Error\", \"message\": \"Ocorreu um erro inesperado.\"}")))
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @Valid @RequestPart UsuarioInserirDTO usuarioInserirDTO) throws CadastroException, IOException {
+	public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioInserirDTO usuarioInserirDTO) throws CadastroException, IOException {
 		Optional<Usuario> usuarioOpt = usuarioService.buscar(id);
 		if (usuarioOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO, null);
+		UsuarioDTO usuarioDTO = usuarioService.atualizar(id, usuarioInserirDTO);
 		usuarioDTO.setId(id);
 		return ResponseEntity.ok(usuarioDTO);
 	}

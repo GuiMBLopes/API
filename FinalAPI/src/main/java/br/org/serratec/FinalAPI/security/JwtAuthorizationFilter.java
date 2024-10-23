@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import br.org.serratec.FinalAPI.exception.TokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +37,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			UsernamePasswordAuthenticationToken auth = getAuthentication(header.substring(7));
 			if (auth != null) {
 				SecurityContextHolder.getContext().setAuthentication(auth);
+			}else {
+				throw new TokenException("Token inválido!");
 			}
 		}
 		chain.doFilter(request, response);

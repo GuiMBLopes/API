@@ -34,16 +34,15 @@ public class UsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder encoder;
-	
+
 	@Autowired
 	private RelationshipRepository relationshipRepository;
-	
+
 	@Autowired
 	private FotoService fotoService;
-	
 
 	public List<UsuarioDTO> listar() {
 		return usuarioRepository.findAll().stream().map(UsuarioDTO::new).toList();
@@ -58,7 +57,8 @@ public class UsuarioService {
 	}
 
 	@Transactional
-	public UsuarioDTO inserir(UsuarioInserirDTO usuarioInserirDTO, MultipartFile file) throws CadastroException, IOException {
+	public UsuarioDTO inserir(UsuarioInserirDTO usuarioInserirDTO, MultipartFile file)
+			throws CadastroException, IOException {
 		if (!usuarioInserirDTO.getSenha().equals(usuarioInserirDTO.getConfirmaSenha())) {
 			throw new CadastroException("As Senhas não iguais");
 		}
@@ -78,19 +78,40 @@ public class UsuarioService {
 		usuario.setDatasNascimento(usuarioInserirDTO.getDataNascimento());
 
 		usuarioRepository.save(usuario);
-		
+
 		fotoService.inserir(usuario, file);
-		
+
 		return adicionarImagemUri(usuario);
-		
+
 	}
-	
+
+	public UsuarioDTO atualizar(Long id, UsuarioInserirDTO usuarioInserirDTO) {
+		if (usuarioRepository.findByEmail(idUsuarioLogado()).get().getId().equals(id)) {
+			Usuario usuario = new Usuario();
+			usuario.setId(id);
+			usuario.setNome(usuarioInserirDTO.getNome() == null
+					? usuarioRepository.findByEmail(idUsuarioLogado()).get().getNome()
+					: usuarioInserirDTO.getNome());
+			usuario.setSobrenome(usuarioInserirDTO.getSobrenome() == null
+					? usuarioRepository.findByEmail(idUsuarioLogado()).get().getSobrenome()
+					: usuarioInserirDTO.getSobrenome());
+			usuario.setEmail(usuarioInserirDTO.getEmail() == null
+					? usuarioRepository.findByEmail(idUsuarioLogado()).get().getEmail()
+					: usuarioInserirDTO.getEmail());
+			usuario.setSenha(usuarioInserirDTO.getSenha() == null
+					? usuarioRepository.findByEmail(idUsuarioLogado()).get().getSenha()
+					: usuarioInserirDTO.getNome());
+			usuario.setDatasNascimento(usuarioInserirDTO.getDataNascimento() == null
+					? usuarioRepository.findByEmail(idUsuarioLogado()).get().getDatasNascimento()
+					: usuarioInserirDTO.getDataNascimento());
+			return new UsuarioDTO(usuarioRepository.save(usuario));
+		}
+		throw new RuntimeException("Você não pode alterar outro usuário!");
+	}
+
 	public UsuarioDTO adicionarImagemUri(Usuario usuario) {
-		URI uri = ServletUriComponentsBuilder
-				.fromCurrentContextPath()
-				.path("/usuario/{id}/foto")
-				.buildAndExpand(usuario.getId())
-				.toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/usuario/{id}/foto")
+				.buildAndExpand(usuario.getId()).toUri();
 		UsuarioDTO dto = new UsuarioDTO();
 		dto.setId(usuario.getId());
 		dto.setNome(usuario.getNome());
@@ -114,11 +135,12 @@ public class UsuarioService {
 			if (id.equals(relationship.getId().getUsuario().getId())) {
 				throw new FollowException("Você já segue esse usuario");
 			}
-			
+
 		}
-		
-		relationshipRepository.save(new Relationship(usuarioRepository.findById(id).get(), logado.get(), LocalDate.now()));
-		
+
+		relationshipRepository
+				.save(new Relationship(usuarioRepository.findById(id).get(), logado.get(), LocalDate.now()));
+
 		return new NomeUsuarioDTO(usuarioRepository.findById(id).get());
 	}
 
@@ -129,15 +151,15 @@ public class UsuarioService {
 		}
 		throw new RuntimeException("Usuario não Autenticado");
 	}
-	
-	public List<UsuarioIdadeDTO> listarPorIdade(){
+
+	public List<UsuarioIdadeDTO> listarPorIdade() {
 		return usuarioRepository.ListarPorIdade();
 	}
-	
-	public Page<UsuarioDTO> buscarPorNome(String nome, Pageable pageable){
+
+	public Page<UsuarioDTO> buscarPorNome(String nome, Pageable pageable) {
 		Page<Usuario> pagUsuarios = usuarioRepository.buscarPorNome(nome, pageable);
 		Page<UsuarioDTO> pagUsuariosDTO = pagUsuarios.map(u -> new UsuarioDTO(u));
-		
+
 		return pagUsuariosDTO;
 	}
 
