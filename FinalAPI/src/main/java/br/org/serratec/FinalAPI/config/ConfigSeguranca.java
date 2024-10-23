@@ -59,18 +59,6 @@ public class ConfigSeguranca {
 		return http.build();
 	}
 	
-//	@Bean
-//	CorsConfigurationSource corsConfigurationSource() {
-//		CorsConfiguration corsConfiguration = new CorsConfiguration();
-//		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-//		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
-//		
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", corsConfiguration.applyPermitDefaultValues());
-//		
-//		return source;
-//	}
-	
 	
 	@Bean
 	BCryptPasswordEncoder bCryptPasswordEncoder() {
